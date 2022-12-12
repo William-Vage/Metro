@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
+import com.jiemaibj.metro.R
+import com.jiemaibj.metro.data.model.NavMenu
 import com.jiemaibj.metro.databinding.FragmentMainBinding
 import com.jiemaibj.metro.utilities.launchAndCollectIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +31,15 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mAdapter = MenuAdapter()
+        val mAdapter = MenuAdapter {
+            Log.i("main", it.toString())
+            when (it) {
+                NavMenu.PUSH -> {
+                    findNavController().navigate(R.id.action_mainFragment_to_taskFragment)
+                }
+                else -> Unit
+            }
+        }
         with(binding.recycler) {
             adapter = mAdapter
         }

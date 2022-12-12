@@ -3,6 +3,7 @@ package com.jiemaibj.metro.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jiemaibj.metro.data.LoginDataSource
+import com.jiemaibj.metro.utilities.SM2Util
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +26,11 @@ class AppModule {
     @Provides
     fun provideLoginDataSource(): LoginDataSource {
         return LoginDataSource()
+    }
+
+    @Provides
+    fun provideSM2Util(): SM2Util {
+        return SM2Util()
     }
 
     @ApplicationScope
