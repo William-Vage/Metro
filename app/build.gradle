@@ -76,6 +76,8 @@ dependencies {
     // Kotlin + coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
+    implementation "cn.hutool:hutool-all:5.8.10"
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
 
 }
 // Allow references to generated code
