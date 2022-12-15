@@ -15,4 +15,5 @@
     <string name="example_task_name">示例任务名称</string>
     <string name="example_task_description">任务目标是对轨道进行检查，确保其处于完好状态。巡检员需要携带必要的工具和设备，并在规定时间内完成任务。应尽量避免碰撞和其他危险情况。</string>
     <string name="action_submit_task">提交任务</string>
+    <string name="prompt_task_image">任务图片</string>
 </resources>

@@ -98,15 +98,37 @@
                     android:text="@={viewModel.task.description}" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/imageTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="@string/prompt_task_image"
+                app:layout_constraintEnd_toEndOf="@id/endGuideline"
+                app:layout_constraintStart_toStartOf="@id/startGuideline"
+                app:layout_constraintTop_toBottomOf="@id/taskDescriptionInputLayout" />
+
+            <ImageView
+                android:id="@+id/taskImageView"
+                android:layout_marginTop="8dp"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:src="@drawable/main_cover"
+                android:background="@drawable/bg_border"
+                app:layout_constraintEnd_toEndOf="@id/endGuideline"
+                app:layout_constraintStart_toStartOf="@id/startGuideline"
+                app:layout_constraintTop_toBottomOf="@id/imageTextView"
+                android:contentDescription="@string/prompt_task_image" />
+
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:onClick="@{(v) -> viewModel.submit()}"
+                android:onClick="@{viewModel.submit}"
                 android:text="@string/action_submit_task"
                 app:layout_constraintEnd_toEndOf="@id/endGuideline"
                 app:layout_constraintStart_toStartOf="@id/startGuideline"
-                app:layout_constraintTop_toBottomOf="@id/taskDescriptionInputLayout" />
+                app:layout_constraintTop_toBottomOf="@id/taskImageView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

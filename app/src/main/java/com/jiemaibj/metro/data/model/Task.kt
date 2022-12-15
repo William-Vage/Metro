@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class Task(
     var name: String,
     var description: String,
+    var image: String? = null,
 )
