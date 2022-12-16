@@ -17,6 +17,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+import com.jiemaibj.metro.utils.SM4Util
+import com.jiemaibj.metro.utils.DESUtil
 
 @HiltViewModel
 class TaskViewModel @Inject constructor(@ApplicationContext context: Context) :
@@ -39,8 +41,27 @@ class TaskViewModel @Inject constructor(@ApplicationContext context: Context) :
             // encrypts task data here
             task.value = task.value!!.copy(image = image)
             val json = Json.encodeToString(task.value)
+
+
+            var startTime = System.currentTimeMillis()
+            var sm4 = SM4Util()
+            val sm4Encrypt = sm4.encrypt(json)
+            var endTime = System.currentTimeMillis()
+            var usedTime = (endTime - startTime)
+            val sm4String = "SM4加密耗时:${usedTime} ms"
+
+            startTime = System.currentTimeMillis()
+            var des = DESUtil()
+            val desEncrypt = des.encrypt(json)
+            endTime = System.currentTimeMillis()
+            usedTime = (endTime - startTime)
+            val desString = "DES加密耗时:${usedTime} ms"
+
+            val print = "任务信息与任务图片加密完成\n${sm4String}\n${desString}"
             // pops up dialog
-            dialog.value = json.substring(0, 200)
+            dialog.value = print
+
+
         }
     }
 }
