@@ -6,7 +6,6 @@ import androidx.work.WorkerParameters
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import com.jiemaibj.metro.R
-import com.jiemaibj.metro.data.AppDatabase
 import com.jiemaibj.metro.data.model.NavMenu
 import com.jiemaibj.metro.data.model.Permissions
 import com.jiemaibj.metro.utilities.INT_APP_HANDLE_OVERHAUL
@@ -49,15 +48,15 @@ class InitDatabaseWorker(
         val menus = mutableListOf<NavMenu>()
         for (permissions in permissionsList) {
             when (permissions) {
-                INT_APP_TRACK_OVERHAUL -> {
-                    menus.add(NavMenu(name = "跟踪检修任务", iconId = R.drawable.ic_password))
-                }
-                INT_APP_HANDLE_OVERHAUL -> {
-                    menus.add(NavMenu(name = "检修工作流程", iconId = R.drawable.ic_password))
-                }
-                INT_APP_SETTING -> {
-                    menus.add(NavMenu(name = "设置", iconId = R.drawable.ic_setting_menu))
-                }
+//                INT_APP_TRACK_OVERHAUL -> {
+//                    menus.add(NavMenu(itemName = "跟踪检修任务", iconId = R.drawable.ic_password))
+//                }
+//                INT_APP_HANDLE_OVERHAUL -> {
+//                    menus.add(NavMenu(itemName = "检修工作流程", iconId = R.drawable.ic_password))
+//                }
+//                INT_APP_SETTING -> {
+//                    menus.add(NavMenu(itemName = "设置", iconId = R.drawable.ic_setting_menu))
+//                }
             }
         }
         return menus

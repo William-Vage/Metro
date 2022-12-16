@@ -7,6 +7,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import org.bouncycastle.util.encoders.Base64
 
 inline fun <T> Flow<T>.launchAndCollectIn(
     owner: LifecycleOwner,
@@ -18,4 +19,12 @@ inline fun <T> Flow<T>.launchAndCollectIn(
             action(it)
         }
     }
+}
+
+fun ByteArray.toBase64String(): String {
+    return Base64.toBase64String(this)
+}
+
+fun String.decodeBase64(): ByteArray {
+    return Base64.decode(this)
 }

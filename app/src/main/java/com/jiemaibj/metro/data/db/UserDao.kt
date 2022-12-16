@@ -7,5 +7,5 @@ import androidx.room.Insert
 interface UserDao {
 
     @Insert
-   suspend fun insert(user: User)
+    suspend fun insert(user: User)
 }

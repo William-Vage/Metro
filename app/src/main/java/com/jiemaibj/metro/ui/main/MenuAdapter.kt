@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jiemaibj.metro.data.model.NavMenu
 import com.jiemaibj.metro.databinding.ItemMenuMainBinding
 
-class MenuAdapter : ListAdapter<NavMenu, MenuAdapter.MenuViewHolder>(MenuDiffCallback()) {
+class MenuAdapter(val onNavClicked: (NavMenu) -> Unit) :
+    ListAdapter<NavMenu, MenuAdapter.MenuViewHolder>(MenuDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
         return MenuViewHolder(
@@ -24,24 +25,23 @@ class MenuAdapter : ListAdapter<NavMenu, MenuAdapter.MenuViewHolder>(MenuDiffCal
         holder.bind(getItem(position))
     }
 
-    class MenuViewHolder(private val binding: ItemMenuMainBinding) :
+    inner class MenuViewHolder(private val binding: ItemMenuMainBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(menu: NavMenu) {
             with(binding) {
                 binding.item = menu
+                binding.itemCard.setOnClickListener {
+                    onNavClicked(menu)
+                }
                 executePendingBindings()
             }
-        }
-
-        fun navigateToMenu() {
-            //todo 跳转
         }
     }
 
     private class MenuDiffCallback : DiffUtil.ItemCallback<NavMenu>() {
         override fun areItemsTheSame(oldItem: NavMenu, newItem: NavMenu): Boolean {
-            return oldItem.name == newItem.name
+            return oldItem.itemName == newItem.itemName
         }
 
         override fun areContentsTheSame(oldItem: NavMenu, newItem: NavMenu): Boolean {
