@@ -1,8 +1,6 @@
 package com.jiemaibj.metro
 
 import com.jiemaibj.metro.utilities.SM2Util
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
 import org.junit.Assert.*
 import org.junit.Test
 import kotlin.random.Random
@@ -12,7 +10,7 @@ class SM2UnitTest {
 
     @Test
     fun generateKey() {
-        val keyPair = sm2Util.generateSm2KeyPair()
+        val keyPair = sm2Util.generateKeyPair()
         val prvKeyStr = keyPair.private.toString()
         val pubKeyStr = keyPair.public.toString()
         assertNotNull(prvKeyStr)
@@ -21,20 +19,20 @@ class SM2UnitTest {
 
     @Test
     fun keySerialization() {
-        val keyPair = sm2Util.generateSm2KeyPair()
-        val prvKeyStr = sm2Util.sm2PrivateKeyToString(keyPair.private)
-        val pubKeyStr = sm2Util.sm2PublicKeyToString(keyPair.public)
-        assertEquals(keyPair.private, sm2Util.stringToSM2PrivateKey(prvKeyStr))
-        assertEquals(keyPair.public, sm2Util.stringToSM2PublicKey(pubKeyStr))
+        val keyPair = sm2Util.generateKeyPair()
+        val prvKeyStr = sm2Util.privateKeyToString(keyPair.private)
+        val pubKeyStr = sm2Util.publicKeyToString(keyPair.public)
+        assertEquals(keyPair.private, sm2Util.stringToPrivateKey(prvKeyStr))
+        assertEquals(keyPair.public, sm2Util.stringToPublicKey(pubKeyStr))
     }
 
     @Test
     fun encryptDecrypt() {
-        val keyPair = sm2Util.generateSm2KeyPair()
+        val keyPair = sm2Util.generateKeyPair()
         for (length in 1024..4096 step 1024) {
             val bytes = Random.nextBytes(length)
-            val encrypted = sm2Util.encrypt(bytes, keyPair.public as BCECPublicKey)
-            val decrypted = sm2Util.decrypt(encrypted, keyPair.private as BCECPrivateKey)
+            val encrypted = sm2Util.encrypt(bytes, keyPair.public)
+            val decrypted = sm2Util.decrypt(encrypted, keyPair.private)
             assertArrayEquals(bytes, decrypted)
         }
     }

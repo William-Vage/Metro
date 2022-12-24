@@ -3,6 +3,8 @@ package com.jiemaibj.metro.utilities
 import org.bouncycastle.asn1.gm.GMNamedCurves
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers
 import org.bouncycastle.asn1.x9.X9ECParameters
+import org.bouncycastle.crypto.ec.ECElGamalEncryptor
+import org.bouncycastle.crypto.ec.ECEncryptor
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
 import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory
@@ -27,7 +29,7 @@ import javax.crypto.CipherInputStream
  * @author Rhacoal
  * @date 2022-12-12
  */
-class SM2Util {
+class SM2Util : AsymmetricCipherUtil<PublicKey, PrivateKey> {
     private val provider: BouncyCastleProvider = BouncyCastleProvider()
 
     // SM2 曲线参数
@@ -50,14 +52,15 @@ class SM2Util {
     /**
      * Generates SM2 key pair.
      */
-    fun generateSm2KeyPair(): KeyPair {
-        return keyPairGenerator.generateKeyPair()
-    }
+    override fun generateKeyPair() =
+        keyPairGenerator.generateKeyPair().let {
+            GenericKeyPair(it.public, it.private)
+        }
 
     /**
      * Decodes SM2 public key in hex format.
      */
-    fun stringToSM2PublicKey(key: String): BCECPublicKey {
+    override fun stringToPublicKey(key: String): BCECPublicKey {
         val ecPoint = sm2Params.curve.decodePoint(Hex.decode(key))
         return keyFactory.generatePublic(ECPublicKeySpec(ecPoint, ecParameterSpec)) as BCECPublicKey
     }
@@ -65,7 +68,7 @@ class SM2Util {
     /**
      * Decodes SM2 private key in hex format.
      */
-    fun stringToSM2PrivateKey(key: String): BCECPrivateKey {
+    override fun stringToPrivateKey(key: String): BCECPrivateKey {
         return keyFactory.generatePrivate(
             ECPrivateKeySpec(BigInteger(key, 16), ecParameterSpec)
         ) as BCECPrivateKey
@@ -74,14 +77,14 @@ class SM2Util {
     /**
      * Encodes SM2 public key into hex string.
      */
-    fun sm2PublicKeyToString(key: PublicKey): String {
+    override fun publicKeyToString(key: PublicKey): String {
         return String(Hex.encode((key as BCECPublicKey).q.getEncoded(true)))
     }
 
     /**
      * Encodes SM2 private key into hex string.
      */
-    fun sm2PrivateKeyToString(key: PrivateKey): String {
+    override fun privateKeyToString(key: PrivateKey): String {
         return (key as BCECPrivateKey).d.toString(16)
     }
 
@@ -92,7 +95,7 @@ class SM2Util {
      * @param pubKey public key used for encryption
      * @return ciphertext
      */
-    fun encrypt(input: ByteArray, pubKey: BCECPublicKey): ByteArray {
+    override fun encrypt(input: ByteArray, pubKey: PublicKey): ByteArray {
         val cipher = Cipher.getInstance("SM2", provider)
         cipher.init(Cipher.ENCRYPT_MODE, pubKey)
         return cipher.doFinal(input)
@@ -105,41 +108,10 @@ class SM2Util {
      * @param pubKey public key used for encryption
      * @return a stream
      */
-    fun encrypt(input: InputStream, pubKey: BCECPublicKey): CipherInputStream {
+    fun encrypt(input: InputStream, pubKey: PublicKey): CipherInputStream {
         val cipher = Cipher.getInstance("SM2", provider)
         cipher.init(Cipher.ENCRYPT_MODE, pubKey)
         return CipherInputStream(input, cipher)
-    }
-
-    /**
-     * Encrypts an array of bytes.
-     *
-     * @param pubKey public key encoded as a hex string
-     * @see SM2Util.encrypt(ByteArray, BCECPublicKey)
-     */
-    fun encrypt(input: ByteArray, pubKey: String): ByteArray {
-        return encrypt(input, stringToSM2PublicKey(pubKey))
-    }
-
-    /**
-     * Encrypts a string.
-     *
-     * @param input the string, which is encoded into UTF-8 bytes
-     * @param pubKey public key encoded as a hex string
-     * @see SM2Util.encrypt(ByteArray, BCECPublicKey)
-     */
-    fun encrypt(input: String, pubKey: String): ByteArray {
-        return encrypt(input.toByteArray(), stringToSM2PublicKey(pubKey))
-    }
-
-    /**
-     * Encrypts an array of bytes, and encodes the ciphertext in base64.
-     *
-     * @param pubKey public key encoded as a hex string
-     * @see SM2Util.encrypt(ByteArray, BCECPublicKey)
-     */
-    fun encryptAsBase64String(input: ByteArray, pubKey: String): String {
-        return encrypt(input, stringToSM2PublicKey(pubKey)).toBase64String()
     }
 
     /**
@@ -149,7 +121,7 @@ class SM2Util {
      * @param prvKey private key used for encryption
      * @return the encrypted bytes
      */
-    fun decrypt(input: ByteArray, prvKey: BCECPrivateKey): ByteArray {
+    override fun decrypt(input: ByteArray, prvKey: PrivateKey): ByteArray {
         val cipher = Cipher.getInstance("SM2", provider)
         cipher.init(Cipher.DECRYPT_MODE, prvKey)
         return cipher.doFinal(input)
@@ -162,30 +134,10 @@ class SM2Util {
      * @param prvKey private key used for encryption
      * @return the encrypted bytes
      */
-    fun decrypt(input: InputStream, prvKey: BCECPrivateKey): CipherInputStream {
+    fun decrypt(input: InputStream, prvKey: PrivateKey): CipherInputStream {
         val cipher = Cipher.getInstance("SM2", provider)
         cipher.init(Cipher.DECRYPT_MODE, prvKey)
         return CipherInputStream(input, cipher)
-    }
-
-    /**
-     * Decrypts ciphertext.
-     *
-     * @param prvKey private key encoded as a hex string
-     * @see SM2Util.decrypt(ByteArray, BCECPrivateKey)
-     */
-    fun decrypt(input: ByteArray, prvKey: String): ByteArray {
-        return decrypt(input, stringToSM2PrivateKey(prvKey))
-    }
-
-    /**
-     * Decrypts ciphertext in base64 format.
-     *
-     * @param prvKey private key encoded as a hex string
-     * @return the encrypted bytes
-     */
-    fun decryptBase64String(input: String, prvKey: String): ByteArray {
-        return decrypt(input.decodeBase64(), stringToSM2PrivateKey(prvKey))
     }
 
     /**
@@ -200,7 +152,7 @@ class SM2Util {
         val signature =
             Signature.getInstance(GMObjectIdentifiers.sm2sign_with_sm3.toString(), provider)
         // 将私钥HEX字符串转换为X值
-        val privateKey = stringToSM2PrivateKey(prvKey)
+        val privateKey = stringToPrivateKey(prvKey)
         // 初始化为签名状态
         signature.initSign(privateKey)
         // 传入签名字节
@@ -232,7 +184,7 @@ class SM2Util {
         // 创建签名对象
         val signature =
             Signature.getInstance(GMObjectIdentifiers.sm2sign_with_sm3.toString(), provider)
-        val key = stringToSM2PublicKey(pubKey)
+        val key = stringToPublicKey(pubKey)
         // 初始化为验签状态
         signature.initVerify(key)
         signature.update(bytes)

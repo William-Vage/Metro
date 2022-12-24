@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jiemaibj.metro.databinding.ActivityLoginBinding
 import com.jiemaibj.metro.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,12 +55,19 @@ class LoginActivity : AppCompatActivity() {
             loading.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
+            } else {
+                MaterialAlertDialogBuilder(this@LoginActivity)
+                    .setTitle("加密测试 (1024 字节)")
+                    .setMessage(loginResult.message)
+                    .setPositiveButton("OK") { _, _ ->
+                        navigateToMain()
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    }
+                    .show()
             }
-            navigateToMain()
-            setResult(Activity.RESULT_OK)
-            finish()
         })
-       
+
         password.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(

@@ -6,6 +6,7 @@ import com.jiemaibj.metro.data.db.UserDao
 import com.jiemaibj.metro.data.model.LoggedInUser
 import com.jiemaibj.metro.di.ApplicationScope
 import com.jiemaibj.metro.utilities.SM2Util
+import com.jiemaibj.metro.utilities.decodeBase64
 import com.jiemaibj.metro.utilities.toBase64String
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class LoginRepository @Inject constructor(
     private val dataSource: LoginDataSource,
     private val userDao: UserDao,
-    private val sM2Util: SM2Util,
+    private val sm2Util: SM2Util,
     @ApplicationScope private val externalScope: CoroutineScope
 ) {
 
@@ -52,12 +53,20 @@ class LoginRepository @Inject constructor(
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser
         // If user credentials will be cached in local storage, it is recommended it be encrypted
-        val json = Json.encodeToString(loggedInUser)
-        val keypair = sM2Util.generateSm2KeyPair()
-        val e = sM2Util.encrypt(json.toByteArray(), keypair.public as BCECPublicKey).toBase64String()
-        Log.i("login", "encrypted: $e")
+        val keypair = sm2Util.generateKeyPair()
+        val encrypted =
+            sm2Util.encrypt(loggedInUser.secret.decodeBase64(), keypair.public).toBase64String()
+        Log.i("login", "encrypted: $encrypted")
         externalScope.launch {
-            userDao.insert(User(loggedInUser.userId, loggedInUser.username, ""))
+            userDao.insert(
+                User(
+                    id = loggedInUser.userId,
+                    username = loggedInUser.username,
+                    realName = "",
+                    key = sm2Util.privateKeyToString(keypair.private),
+                    secret = encrypted
+                )
+            )
         }
     }
 }

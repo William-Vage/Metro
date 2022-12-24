@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class LoggedInUser(
     val userId: String,
     val username: String,
-    val permissions: List<Int> = emptyList()
+    val permissions: List<Int> = emptyList(),
+    val secret: String,
 )

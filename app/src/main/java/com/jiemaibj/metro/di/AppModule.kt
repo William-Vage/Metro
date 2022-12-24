@@ -3,6 +3,7 @@ package com.jiemaibj.metro.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jiemaibj.metro.data.LoginDataSource
+import com.jiemaibj.metro.utilities.RSAUtil
 import com.jiemaibj.metro.utilities.SM2Util
 import dagger.Module
 import dagger.Provides
@@ -31,6 +32,11 @@ class AppModule {
     @Provides
     fun provideSM2Util(): SM2Util {
         return SM2Util()
+    }
+
+    @Provides
+    fun provideRSAUtil(): RSAUtil {
+        return RSAUtil()
     }
 
     @ApplicationScope

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jiemaibj.metro.R
 import com.jiemaibj.metro.data.model.NavMenu
 import com.jiemaibj.metro.databinding.FragmentMainBinding
@@ -36,6 +37,13 @@ class MainFragment : Fragment() {
             when (it) {
                 NavMenu.PUSH -> {
                     findNavController().navigate(R.id.action_mainFragment_to_taskFragment)
+                }
+                NavMenu.CALL -> {
+                    // do something
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Message")
+                        .setMessage("你想弹窗的内容")
+                        .show()
                 }
                 else -> Unit
             }

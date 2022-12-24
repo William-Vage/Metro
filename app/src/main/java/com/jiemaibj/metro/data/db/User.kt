@@ -9,5 +9,7 @@ data class User(
     @PrimaryKey val id: String,
     val username: String,
     val realName: String,
-    val lastDate: Calendar = Calendar.getInstance()
+    val key: String,
+    val secret: String,
+    val lastDate: Calendar = Calendar.getInstance(),
 )

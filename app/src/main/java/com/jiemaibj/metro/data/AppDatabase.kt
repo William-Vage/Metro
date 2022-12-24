@@ -15,7 +15,7 @@ import com.jiemaibj.metro.utilities.DATA_FILENAME
 import com.jiemaibj.metro.workers.InitDatabaseWorker
 import com.jiemaibj.metro.workers.InitDatabaseWorker.Companion.KEY_FILENAME
 
-@Database(entities = [User::class], version = 1, exportSchema = false)
+@Database(entities = [User::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
